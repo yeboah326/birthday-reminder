@@ -10,7 +10,7 @@ class ContactRelation(enum.Enum):
     friend = 5
 
 class Contact(db.Model):
-    __table__ = "contact"
+    __tablename__ = "contact"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
