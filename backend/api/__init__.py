@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
-from dotenv import dotenv_values, load_dotenv
+from dotenv import load_dotenv
 import os
 
 # Load environment variables
@@ -14,6 +14,7 @@ jwt = JWTManager()
 cors = CORS()
 ma = Marshmallow()
 
+# TODO: Add configutaions for a development database
 class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite://")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
