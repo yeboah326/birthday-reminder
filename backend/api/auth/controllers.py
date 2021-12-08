@@ -1,21 +1,34 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from api.auth.models import User, UserSchema
+from api import db
 
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 # Schemas
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+user_schema = UserSchema(dump_only=["id"], unknown="EXCLUDE")
+users_schema = UserSchema(many=True, dump_only=["id"], unknown="EXCLUDE")
 
 @auth.get("/hello")
 def auth_hello():
-    return {"message": "Auth blueprint working"}
+    return {"message": "Auth blueprint is working"}
 
 
-@auth.post("/new_user")
+@auth.post("/users")
 def auth_create_new_user():
-    pass
+    data = request.json
+
+    # Load the user instance from the data
+    new_user = user_schema.load(data)
+
+    # Set the password for the user
+    new_user.password = data['password']
+
+    # Save data to the database
+    db.session.add(new_user)
+    db.session.commit()
+
+    return {"message": f"New user {new_user.name} created"}
 
 @auth.post("/login")
 def auth_login_user():
@@ -34,11 +47,11 @@ def auth_login_user():
     return {"message": "A user with the given credentials does not exist"}, 404
 
 @auth.get("/users")
-def get_all_users():
-    all_users = User.all()
-    return users_schema.dump(all_users)
+def auth_get_all_users():
+    all_users = User.query.all()
+    return jsonify(users_schema.dump(all_users))
 
 @auth.get("/users/<id>")
-def get_user_by_id(id):
+def auth_get_user_by_id(id):
     user = User.find_by_id(id)
     return user_schema.dump(user)
