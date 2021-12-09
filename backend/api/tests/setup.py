@@ -2,6 +2,7 @@ from api import db
 from api.auth.models import User, UserSchema
 from api.reminder.models import Contact
 from api.tests.data import (
+    super_user,
     test_user_1,
     test_user_2
 )
@@ -15,6 +16,25 @@ def reset_db():
     User.query.delete()
     Contact.query.delete()
     db.session.commit()
+
+def create_super_user(client):
+    # Create super user
+    client.post(
+        "/api/auth/users",
+        json=super_user
+    )
+
+    super = User.find_by_email(super_user['email'])
+
+    # Login the super user
+    response = client.post(
+        "/api/auth/login",
+        json={"email": super_user['email'], "password": super_user['password']}
+    )
+
+    return response.json
+
+
 
 def create_one_test_user(client):
     # Create first user
