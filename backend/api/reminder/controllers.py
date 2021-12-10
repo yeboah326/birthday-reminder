@@ -60,18 +60,22 @@ def reminder_get_all_upcoming_birthdays():
     today = datetime.date.today()
 
     # Find all users who birthdays are after today for the rest of the year
-    upcoming = db.session.query(Contact).filter(
-        user_id=get_jwt_identity(),
-        extract("day", Contact.date_of_birth) >= today.day,
-        extract("month", Contact.date_of_birth) >= today.month,
-    ).order_by(
-        extract("day", Contact.date_of_birth),
-        extract("month", Contact.date_of_birth),
-        extract("year", Contact.date_of_birth)
-    ).all()
-
+    upcoming = (
+        db.session.query(Contact)
+        .filter(
+            extract("day", Contact.date_of_birth) >= today.day,
+            extract("month", Contact.date_of_birth) >= today.month,
+            user_id=get_jwt_identity(),
+        )
+        .order_by(
+            extract("day", Contact.date_of_birth),
+            extract("month", Contact.date_of_birth),
+            extract("year", Contact.date_of_birth),
+        )
+        .all()
+    )
+    
     return jsonify(contacts_schema.dump(upcoming)), 200
-
 
 
 @reminder.get("/birthday/current")
@@ -81,12 +85,15 @@ def reminder_get_all_birthdays_current_year():
     today = datetime.date.today()
 
     # Find all contacts
-    upcoming = db.session.query(Contact).filter(
-        user_id=get_jwt_identity()
-        ).order_by(
-        extract("day", Contact.date_of_birth),
-        extract("month", Contact.date_of_birth),
-        extract("year", Contact.date_of_birth)
-    ).all()
+    upcoming = (
+        db.session.query(Contact)
+        .filter(user_id=get_jwt_identity())
+        .order_by(
+            extract("day", Contact.date_of_birth),
+            extract("month", Contact.date_of_birth),
+            extract("year", Contact.date_of_birth),
+        )
+        .all()
+    )
 
     return jsonify(contacts_schema.dump(upcoming)), 200
