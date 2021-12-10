@@ -11,6 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(50), nullable=False, unique=True)
     password_hash = db.Column(db.String(120), nullable=False)
     type = db.Column(db.String(10), nullable=False, default="normal")
+    contacts = db.relationship("Contact", backref="user", cascade="all, delete", passive_deletes=True)
 
     @property
     def password(self):
