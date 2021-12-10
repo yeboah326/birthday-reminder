@@ -3,6 +3,7 @@ from sqlalchemy import Enum, extract
 import enum
 from marshmallow import Schema, fields, post_load
 
+
 class ContactRelation(enum.Enum):
     father = 1
     mother = 2
@@ -10,11 +11,14 @@ class ContactRelation(enum.Enum):
     sister = 4
     friend = 5
 
+
 class Contact(db.Model):
     __tablename__ = "contact"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("custom_user.id", ondelete="cascade"), nullable=False)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("custom_user.id", ondelete="cascade"), nullable=False
+    )
     name = db.Column(db.String(100), nullable=False)
     date_of_birth = db.Column(db.Date(), nullable=False)
     relation = db.Column(Enum(ContactRelation))

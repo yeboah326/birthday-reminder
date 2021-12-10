@@ -8,6 +8,7 @@ def app():
     flask_app.app_context().push()
     yield flask_app
 
+
 @pytest.fixture
 def client(app):
     yield app.test_client()

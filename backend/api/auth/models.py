@@ -11,7 +11,9 @@ class User(db.Model):
     email = db.Column(db.String(50), nullable=False, unique=True)
     password_hash = db.Column(db.String(120), nullable=False)
     type = db.Column(db.String(10), nullable=False, default="normal")
-    contacts = db.relationship("Contact", backref="user", cascade="all, delete", passive_deletes=True)
+    contacts = db.relationship(
+        "Contact", backref="user", cascade="all, delete", passive_deletes=True
+    )
 
     @property
     def password(self):
@@ -22,7 +24,7 @@ class User(db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password) -> bool:
-        return check_password_hash(self.password_hash, password)\
+        return check_password_hash(self.password_hash, password)
 
     @classmethod
     def find_by_id(cls, id):
@@ -34,6 +36,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User | {self.name} | {self.email}>"
+
 
 class UserSchema(Schema):
     id = fields.Int(required=True)

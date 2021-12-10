@@ -43,6 +43,7 @@ def test_reminder_create_contact_bad_data(client):
     # Reset the database
     reset_db()
 
+
 def test_reminder_get_all_contacts(client):
     # Reset the database
     reset_db()
@@ -52,8 +53,7 @@ def test_reminder_get_all_contacts(client):
     create_multiple_contacts(client, user)
 
     response = client.get(
-        "/api/reminder/contact",
-        headers={"Authorization": f"Bearer {user['token']}"}
+        "/api/reminder/contact", headers={"Authorization": f"Bearer {user['token']}"}
     )
 
     assert response.status_code == 200
@@ -61,6 +61,7 @@ def test_reminder_get_all_contacts(client):
 
     # Reset the database
     reset_db()
+
 
 def test_reminder_get_all_upcoming_birthdays(client):
     # Reset the database
@@ -72,7 +73,7 @@ def test_reminder_get_all_upcoming_birthdays(client):
 
     response = client.get(
         "/api/reminder/birthday/upcoming",
-        headers={"Authorization": f"Bearer {user['token']}"}
+        headers={"Authorization": f"Bearer {user['token']}"},
     )
     print(response.json)
     assert 1 == 2
