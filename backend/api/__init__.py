@@ -1,18 +1,14 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
-from flask_cors import CORS
-from flask_marshmallow import Marshmallow
+from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
+from .extension import cors, db, jwt, ma
 import os
+
+from api.reminder.utils import get_all_users_contacts_birthdays
+
 
 # Load environment variables
 load_dotenv()
-
-db = SQLAlchemy()
-jwt = JWTManager()
-cors = CORS()
-ma = Marshmallow()
 
 # TODO: Add configutaions for a development database
 class BaseConfig(object):
@@ -30,6 +26,8 @@ def create_app(config: str) -> Flask:
     jwt.init_app(app)
     cors.init_app(app)
     ma.init_app(app)
+    scheduler = BackgroundScheduler()
+    
 
     # Import blueprints
     from api.auth.controllers import auth
@@ -41,6 +39,7 @@ def create_app(config: str) -> Flask:
 
     @app.route("/happy")
     def sayHappyBirthday():
+        print("Happy birthday")
         return {"message": "Happy birthday"}
 
     return app
