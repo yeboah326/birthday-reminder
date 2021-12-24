@@ -2,7 +2,7 @@ from flask.cli import FlaskGroup
 from api import create_app, db
 from api.reminder.utils import get_all_users_contacts_birthdays
 
-cli = FlaskGroup(create_app("BaseConfig"))
+cli = FlaskGroup(create_app())
 
 @cli.command("create_db")
 def create_db():

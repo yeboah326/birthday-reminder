@@ -1,6 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify
+from marshmallow.exceptions import ValidationError
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
+from api.config import config_dict
 from .extension import cors, db, jwt, ma
 import os
 
@@ -10,24 +12,18 @@ from api.reminder.utils import get_all_users_contacts_birthdays
 # Load environment variables
 load_dotenv()
 
-# TODO: Add configutaions for a development database
-class BaseConfig(object):
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite://")
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = os.getenv("SECRET_KEY", "very-simple-jwt-key")
-
-
-def create_app(config: str) -> Flask:
+def create_app() -> Flask:
     app = Flask(__name__)
-    app.config.from_object(BaseConfig)
+
+    # Project configurations
+    env = os.getenv("FLASK_ENV")
+    app.config.from_object(f"api.config.{config_dict[env]}")
 
     # Load flask extensions
     db.init_app(app)
     jwt.init_app(app)
     cors.init_app(app)
     ma.init_app(app)
-    scheduler = BackgroundScheduler()
-    
 
     # Import blueprints
     from api.auth.controllers import auth
@@ -39,7 +35,22 @@ def create_app(config: str) -> Flask:
 
     @app.route("/happy")
     def sayHappyBirthday():
-        print("Happy birthday")
         return {"message": "Happy birthday"}
 
+    @app.errorhandler(ValidationError)
+    def register_validation_error(error):
+        return jsonify({'message': error.messages}), 400
+
     return app
+
+# Setup scheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    get_all_users_contacts_birthdays,
+    timezone='UTC',
+    trigger='cron',
+    hour=7,
+    minute=19,
+    second=30
+)
+scheduler.start()
