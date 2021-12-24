@@ -27,3 +27,6 @@
 # Notes
 - The article i'm using [Dockerizing-Flask-Postgres-Nginx] (https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/)
 - Running the flask server with `flask run` doesn't the actual errors with the app, `python3 run.py run` does a better job at that
+
+## Design
+https://www.figma.com/file/BFY4kEKf0ewe8VBAodc7lr/birthday-reminder?node-id=0%3A1
