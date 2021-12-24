@@ -23,3 +23,7 @@
 
 **Run all test files in a single directory**
 `docker-compose exec backend pytest api/tests/ -vv`
+
+# Notes
+- The article i'm using [Dockerizing-Flask-Postgres-Nginx] (https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/)
+- Running the flask server with `flask run` doesn't the actual errors with the app, `python3 run.py run` does a better job at that
